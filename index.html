@@ -187,8 +187,8 @@ h1{font-size:40px;font-weight:700;letter-spacing:-1px;line-height:1}
     <h3 id="shT">Einheit</h3>
     <div class="sub" id="shS"></div>
     <div class="fl">
-      <div class="fld" id="fKmW"><label for="fKm">km</label><input id="fKm" type="number" inputmode="decimal" step="0.1" min="0"></div>
-      <div class="fld"><label for="fDu">Minuten</label><input id="fDu" type="number" inputmode="numeric" min="0"></div>
+      <div class="fld" id="fKmW"><label for="fKm">km</label><input id="fKm" type="text" inputmode="decimal" placeholder="0,00" autocomplete="off"></div>
+      <div class="fld"><label for="fDu">Zeit</label><input id="fDu" type="text" inputmode="numeric" placeholder="HH:MM:SS" maxlength="8" autocomplete="off"></div>
       <div class="fld"><label for="fHr">Ø Puls</label><input id="fHr" type="number" inputmode="numeric" min="0"></div>
     </div>
     <div class="fld" style="margin-top:14px"><label>RPE</label><div class="rpe" id="rpe"></div></div>
@@ -310,7 +310,9 @@ let view='week', vwi=cwi(), aph=P[vwi].ph, openW=new Set([vwi]), openC=new Set()
 function sum(a){return a.reduce((s,x)=>s+(+x||0),0);}
 function cwi(){return Math.max(0,Math.min(Math.floor((Date.now()-START)/(7*DAY)),P.length-1));}
 function f1(n){return (Math.round(n*10)/10).toLocaleString('de-DE',{minimumFractionDigits:1,maximumFractionDigits:1});}
+function f2(n){return (Math.round(n*100)/100).toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function pad(n){return String(n).padStart(2,'0');}
+function hms(du){const s=Math.round(du*60);return `${pad(Math.floor(s/3600))}:${pad(Math.floor(s%3600/60))}:${pad(s%60)}`;}
 const MON=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
 function rng(w){const a=w.s,b=w.e;return a.getMonth()===b.getMonth()?`${pad(a.getDate())}.–${pad(b.getDate())}. ${MON[b.getMonth()]}`:`${pad(a.getDate())}. ${MON[a.getMonth()]}–${pad(b.getDate())}. ${MON[b.getMonth()]}`;}
 function pace(km,du){if(!km||!du)return'';const s=du*60/km;return `${Math.floor(s/60)}:${pad(Math.round(s%60))}`;}
@@ -323,7 +325,7 @@ const CHECK='<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" 
 function card(w){
   const l=S.logs[w.id], d=!!l, isRun=RUN.includes(w.ty);
   let meta;
-  if(d){meta=[l.km?`${f1(l.km)} km`:'',isRun&&l.km&&l.du?`${pace(l.km,l.du)}/km`:(l.du?`${l.du} min`:''),l.hr?`Ø${l.hr}`:'',l.rpe?`RPE ${l.rpe}`:''].filter(Boolean).join(' · ')||'erledigt';}
+  if(d){meta=[l.km?`${f2(l.km)} km`:'',l.du?hms(l.du):'',isRun&&l.km&&l.du?`${pace(l.km,l.du)}/km`:'',l.hr?`Ø${l.hr}`:'',l.rpe?`RPE ${l.rpe}`:''].filter(Boolean).join(' · ')||'erledigt';}
   else{meta=w.km?`~${f1(w.km)} km`:`${w.du} min`;if(w.ty==='long'||w.ty==='run')meta+=` · ${PH[P[w.wi].ph].hr}`;}
   const tag=w.ty==='race'?'RACE':w.ty==='test'?'TEST':w.key?'KEY':'';
   const right=d&&w.cd?(S.cd[w.id]?'<span class="cdok">COOLDOWN ✓</span>':`<button class="cdb" data-a="cd" data-id="${w.id}">COOLDOWN ›</button>`):(tag&&!d?`<span class="tag">${tag}</span>`:'');
@@ -417,7 +419,7 @@ function rStats(){
   </div>
   <div class="card"><h2>Wochen-km</h2>${c1}<div class="lg"><span><i style="background:#E2E2E4"></i>Plan</span><span><i style="background:#0A0A0A"></i>Gelaufen</span><span><i style="border:1.5px solid #FF4557;box-sizing:border-box"></i>Jetzt</span></div></div>
   <div class="card"><h2>Long Run</h2>${c2}<div class="lg"><span><i style="background:#C8C8CA"></i>Plan</span><span><i style="background:#FF4557"></i>Gelaufen</span></div></div>
-  <div class="card"><h2>Letzte Einheiten</h2><div style="margin-top:8px">${fe.length?fe.map(e=>`<div class="fi"><span>${esc(e.t)}<div class="me">Woche ${pad(e.wi+1)}${e.l.ts?' · '+new Date(e.l.ts).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}):''}</div></span><span class="me">${e.l.km?f1(e.l.km)+' km':''}${e.l.hr?'<br>Ø'+e.l.hr:''}</span></div>`).join(''):'<p>Hake deine erste Einheit ab oder importiere eine Garmin-CSV.</p>'}</div></div>`;
+  <div class="card"><h2>Letzte Einheiten</h2><div style="margin-top:8px">${fe.length?fe.map(e=>`<div class="fi"><span>${esc(e.t)}<div class="me">Woche ${pad(e.wi+1)}${e.l.ts?' · '+new Date(e.l.ts).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}):''}</div></span><span class="me">${e.l.km?f2(e.l.km)+' km':''}${e.l.du?'<br>'+hms(e.l.du):''}${e.l.hr?'<br>Ø'+e.l.hr:''}</span></div>`).join(''):'<p>Hake deine erste Einheit ab oder importiere eine Garmin-CSV.</p>'}</div></div>`;
 }
 
 // ───────── Import
@@ -431,7 +433,7 @@ function rImport(){
     gm.forEach((m,i)=>{const a=m.a;
       const opts=cands(a).map(w=>`<option value="${w.id}"${m.to===w.id?' selected':''}>${esc(w.ti)} · ${w.km?f1(w.km)+' km':w.du+' min'}</option>`).join('');
       h+=`<div class="gm${m.ok?' ok':''}${m.skip?' skip':''}"><div class="t">${esc(a.title||a.raw)}</div>
-      <div class="me">${a.date.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})} · ${a.wi>=0&&a.wi<P.length?'Woche '+pad(a.wi+1):'außerhalb des Plans'} · ${[a.km?f1(a.km)+' km':'',a.du?Math.round(a.du)+' min':'',a.hr?'Ø'+a.hr:''].filter(Boolean).join(' · ')}</div>
+      <div class="me">${a.date.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})} · ${a.wi>=0&&a.wi<P.length?'Woche '+pad(a.wi+1):'außerhalb des Plans'} · ${[a.km?f2(a.km)+' km':'',a.du?hms(a.du):'',a.hr?'Ø'+a.hr:''].filter(Boolean).join(' · ')}</div>
       ${m.dup?'<div class="me" style="color:var(--ink)">Bereits importiert</div>':`<select data-a="gsel" data-i="${i}" aria-label="Zuordnung">${opts}<option value="extra"${m.to==='extra'?' selected':''}>Als Extra-Einheit</option><option value="none"${m.to==='none'?' selected':''}>Nicht importieren</option></select>
       <div class="act"><button class="${m.ok?'':'p'}" data-a="gok" data-i="${i}">${m.ok?'Bestätigt ✓':'Bestätigen'}</button><button data-a="gskip" data-i="${i}">${m.skip?'Übersprungen':'Überspringen'}</button></div>`}</div>`;});
     h+=`<button class="btn" data-a="gall">Alle Vorschläge bestätigen</button><button class="btn" data-a="gcommit" ${ok?'':'disabled'}>${ok} Aktivität${ok===1?'':'en'} importieren</button><button class="btn ghost" data-a="greset">Andere CSV wählen</button>`;
@@ -473,7 +475,7 @@ function gparse(text){
 }
 function gcommit(){
   let n=0;
-  gm.forEach(m=>{if(!m.ok||m.skip||m.dup||m.to==='none')return;const a=m.a,l={km:a.km?Math.round(a.km*100)/100:null,du:a.du?Math.round(a.du):null,hr:a.hr?Math.round(a.hr):null,rpe:null,note:'',ts:a.date.getTime(),mt:Date.now(),src:'garmin'};
+  gm.forEach(m=>{if(!m.ok||m.skip||m.dup||m.to==='none')return;const a=m.a,l={km:a.km?Math.round(a.km*100)/100:null,du:a.du?Math.round(a.du*60)/60:null,hr:a.hr?Math.round(a.hr):null,rpe:null,note:'',ts:a.date.getTime(),mt:Date.now(),src:'garmin'};
     if(m.to==='extra')S.extra.push({...l,wi:a.wi,ty:a.ty,title:a.title});else S.logs[m.to]=l;S.gk[m.k]=Date.now();n++;});
   save();gm=[];rImport();
   const v=document.getElementById('v-import');v.insertAdjacentHTML('afterbegin',`<div class="msg">${n} Aktivität${n===1?'':'en'} importiert.</div>`);
@@ -489,10 +491,16 @@ function openSheet(id){
   document.getElementById('rpe').innerHTML=Array.from({length:10},(_,i)=>`<button data-a="rpe" data-n="${i+1}">${i+1}</button>`).join('');
   const s=document.getElementById('sheet');s.classList.add('on');s.setAttribute('aria-hidden','false');
 }
+// Zeit-Feld: Ziffern tippen, Doppelpunkte kommen automatisch (013542 → 01:35:42)
+function pdur(v){const p=String(v).trim().split(':').map(Number);if(!p[0]&&p.length<2||p.some(isNaN))return null;
+  const m=p.length===3?p[0]*60+p[1]+p[2]/60:p.length===2?p[0]+p[1]/60:p[0];return m>0?m:null;}
+document.getElementById('fDu').addEventListener('input',e=>{const d=e.target.value.replace(/\D/g,'').slice(0,6);e.target.value=d.replace(/^(\d{2})(\d{1,2})?(\d{1,2})?$/,(_,a,b,c)=>a+(b?':'+b:'')+(c?':'+c:''));});
+document.getElementById('fKm').addEventListener('input',e=>{const m=e.target.value.replace(/[^\d.,]/g,'').match(/^(\d*)([.,]\d{0,2})?/);e.target.value=m[1]+(m[2]||'');});
 function closeSheet(){const s=document.getElementById('sheet');s.classList.remove('on');s.setAttribute('aria-hidden','true');pid=null;}
 function saveSheet(quick){
   if(!pid)return;const g=i=>parseFloat(String(document.getElementById(i).value).replace(',','.'))||null;
-  const now=Date.now();S.logs[pid]=quick?{km:byId(pid).km||null,ts:now,mt:now}:{km:g('fKm'),du:g('fDu'),hr:g('fHr'),rpe,note:document.getElementById('fNo').value.trim(),ts:now,mt:now};
+  const km=g('fKm'),du=pdur(document.getElementById('fDu').value);
+  const now=Date.now();S.logs[pid]=quick?{km:byId(pid).km||null,ts:now,mt:now}:{km:km?Math.round(km*100)/100:null,du,hr:g('fHr'),rpe,note:document.getElementById('fNo').value.trim(),ts:now,mt:now};
   save();closeSheet();render();
 }
 
