@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F2F2F3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Haspa 27">
+<title>Haspa 2027</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F2F2F3;--card:#FFFFFF;--line:#E2E2E4;--line2:#C8C8CA;--ink:#0A0A0A;--dim:#686869;--red:#FF4557;--sans:'Space Grotesk',system-ui,-apple-system,sans-serif;--mono:'JetBrains Mono',ui-monospace,Menlo,monospace}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+button{font-family:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.mono{font-family:var(--mono)}
+.top{position:sticky;top:0;z-index:50;background:var(--bg);padding:calc(14px + env(safe-area-inset-top)) 22px 12px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+.top .d{color:var(--dim)}
+.pill{background:var(--red);color:var(--ink);padding:4px 8px;border-radius:6px}
+.view{display:none;padding:6px 22px 24px;max-width:560px;margin:0 auto}
+.view.on{display:block}
+.wkhead{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:18px}
+h1{font-size:40px;font-weight:700;letter-spacing:-1px;line-height:1}
+.sub{margin-top:6px;font-size:14px;color:var(--dim)}
+.arrows{display:flex;gap:8px;flex-shrink:0}
+.arr{width:44px;height:44px;border-radius:22px;border:1px solid var(--line2);background:transparent;font-size:18px}
+.arr:disabled{opacity:.3}
+.today{display:none;margin-top:8px;border:none;background:none;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-decoration:underline;text-underline-offset:4px;padding:6px 0}
+.today.on{display:inline-block}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:14px;margin-bottom:18px}
+.hero .row{display:flex;justify-content:space-between;align-items:baseline}
+.big{font-size:56px;font-weight:700;letter-spacing:-2px;line-height:1}
+.of{font-size:18px;color:var(--dim);margin-left:6px}
+.bar{height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.bar>div{height:6px;background:var(--red);transition:width .4s}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;font-family:var(--mono)}
+.lab{font-size:10px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.val{font-size:15px;margin-top:3px}
+.note{font-size:13px;color:var(--dim);line-height:1.5;margin:-6px 0 18px}
+.sec{font-family:var(--mono);font-size:11px;letter-spacing:2px;color:var(--dim);margin:0 0 10px;text-transform:uppercase}
+.list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.wo{background:var(--card);border-radius:16px;border:1px solid transparent}
+.wo.key{border-color:var(--red)}
+.wo.opt{background:transparent;border:1px dashed var(--line2)}
+.wo .r{display:flex;align-items:center;gap:14px;padding:12px 14px}
+.ck{width:44px;height:44px;border-radius:22px;border:1.5px solid var(--line2);background:transparent;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.wo.key .ck{border-color:var(--red)}
+.wo.done .ck{background:var(--red);border-color:var(--red)}
+.bd{flex-grow:1;min-width:0;background:none;border:none;text-align:left;padding:4px 0}
+.ti{font-size:16px;font-weight:500}
+.wo.done .ti{color:var(--dim);text-decoration:line-through}
+.me{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:2px}
+.tag{font-family:var(--mono);font-size:10px;background:var(--red);color:var(--ink);padding:3px 6px;border-radius:4px;letter-spacing:1px;flex-shrink:0}
+.cdb{flex-shrink:0;padding:12px;border-radius:12px;background:var(--ink);color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:1px;border:none}
+.cdok{flex-shrink:0;font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:1px}
+.ex{display:none;padding:0 14px 14px 72px;font-size:13px;color:var(--dim);line-height:1.55}
+.wo.open .ex{display:block}
+.ex .st{margin-top:8px;color:var(--ink)}
+.ex .lnk{margin-top:10px;background:none;border:none;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-decoration:underline;text-underline-offset:4px;padding:6px 0}
+.phs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:16px;padding-bottom:2px}
+.phs::-webkit-scrollbar{display:none}
+.phb{white-space:nowrap;padding:10px 14px;border-radius:12px;border:1px solid var(--line2);background:transparent;font-size:13px}
+.phb.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.wr{background:var(--card);border-radius:16px;margin-bottom:8px;overflow:hidden}
+.wr.cur{box-shadow:inset 0 0 0 1.5px var(--red)}
+.wh{display:flex;align-items:center;gap:12px;width:100%;padding:14px;background:none;border:none;text-align:left}
+.wn{font-size:20px;font-weight:700;width:34px;flex-shrink:0}
+.wm{flex-grow:1;min-width:0}
+.wt{font-size:15px;font-weight:500}
+.wd{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:2px}
+.wp{font-family:var(--mono);font-size:11px;color:var(--dim);text-align:right}
+.wb{display:none;padding:0 10px 10px}
+.wr.open .wb{display:block}
+.wr .wo{background:var(--bg)}
+.wr .wo.opt{background:transparent}
+.card{background:var(--card);border-radius:22px;padding:20px;margin-bottom:14px}
+.card h2{font-size:22px;font-weight:700;letter-spacing:-.5px;margin-bottom:4px}
+.card p{font-size:13px;color:var(--dim);line-height:1.5}
+.zr{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;padding:11px 0;border-top:1px solid var(--line)}
+.zr:first-of-type{border-top:none}
+.zb{height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:500}
+.zn{font-size:14px}
+.zv{font-family:var(--mono);font-size:13px}
+.pr{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--line);font-size:14px}
+.pr:first-of-type{border-top:none}
+.pr .zv{white-space:nowrap}
+.cl{padding:9px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;font-size:14px}
+.cl span:last-child{font-family:var(--mono);font-size:12px;color:var(--dim);white-space:nowrap}
+.btn{display:block;width:100%;padding:15px;border-radius:16px;border:none;background:var(--ink);color:#fff;font-size:15px;font-weight:500;margin-top:14px}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.small{padding:12px;font-size:14px}
+.btn:disabled{opacity:.35}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.tile{background:var(--card);border-radius:18px;padding:16px}
+.tile .n{font-size:30px;font-weight:700;letter-spacing:-1px;margin-top:4px}
+.tile .n small{font-size:14px;color:var(--dim);font-weight:400;margin-left:3px}
+.chart{width:100%;height:auto;display:block;margin-top:12px}
+.lg{display:flex;gap:14px;font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:10px}
+.lg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.fi{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line);font-size:14px}
+.fi:first-of-type{border-top:none}
+.fi .me{text-align:right}
+.drop{position:relative;border:1.5px dashed var(--line2);border-radius:22px;padding:34px 20px;text-align:center;background:var(--card);margin-bottom:14px}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.drop b{display:block;font-size:17px;margin-bottom:6px}
+.drop span{font-size:13px;color:var(--dim)}
+.gm{background:var(--card);border-radius:16px;padding:14px;margin-bottom:8px}
+.gm.ok{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.gm.skip{opacity:.45}
+.gm .t{font-size:15px;font-weight:500}
+.gm select{width:100%;margin-top:10px;padding:12px;border-radius:12px;border:1px solid var(--line2);background:var(--bg);font-family:var(--sans);font-size:14px;color:var(--ink)}
+.gm .act{display:flex;gap:8px;margin-top:10px}
+.gm .act button{flex:1;padding:12px;border-radius:12px;border:1.5px solid var(--ink);background:transparent;font-size:14px}
+.gm .act button.p{background:var(--ink);color:#fff}
+.msg{background:var(--card);border-radius:16px;padding:14px;font-size:14px;margin-bottom:14px;box-shadow:inset 0 0 0 1.5px var(--red)}
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--bg);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:6px 6px calc(10px + env(safe-area-inset-bottom))}
+.nav button{border:none;background:none;font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--dim);padding:14px 0}
+.nav button.on{color:var(--ink);font-weight:500;box-shadow:inset 0 3px 0 var(--red)}
+.sheet{position:fixed;inset:0;z-index:100;background:rgba(10,10,10,.35);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.sheet.on{opacity:1;pointer-events:auto}
+.sh{background:var(--bg);width:100%;max-width:560px;border-radius:24px 24px 0 0;padding:22px 22px calc(26px + env(safe-area-inset-bottom));transform:translateY(100%);transition:transform .28s cubic-bezier(.3,.7,0,1)}
+.sheet.on .sh{transform:none}
+.sh h3{font-size:22px;font-weight:700;letter-spacing:-.5px}
+.fl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
+.fld label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--dim);margin-bottom:5px;text-transform:uppercase}
+.fld input{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line2);background:var(--card);font-family:var(--mono);font-size:16px;color:var(--ink)}
+.rpe{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px}
+.rpe button{height:40px;border-radius:8px;border:1px solid var(--line2);background:var(--card);font-family:var(--mono);font-size:13px}
+.rpe button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.sha{display:flex;gap:8px;margin-top:18px}
+.sha .btn{margin-top:0}
+.cd{position:fixed;inset:0;z-index:120;background:var(--bg);display:none;flex-direction:column;overflow-y:auto}
+.cd.on{display:flex}
+.cdin{width:100%;max-width:560px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 22px calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:16px;flex-grow:1}
+.cdtop{display:flex;justify-content:space-between;align-items:center}
+.back{border:none;background:none;font-family:var(--mono);font-size:12px;letter-spacing:1px;padding:12px 0}
+.seg{display:flex;background:var(--line);border-radius:12px;padding:3px}
+.seg button{height:38px;padding:0 16px;border:none;border-radius:10px;background:transparent;color:var(--dim);font-family:var(--mono);font-size:11px}
+.seg button.on{background:var(--ink);color:#fff}
+.steps{display:grid;gap:4px}
+.steps div{height:4px;border-radius:2px;background:var(--line2)}
+.steps div.d{background:var(--ink)}
+.steps div.c{background:var(--red)}
+.cdc{background:var(--card);border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:14px}
+.cdc .h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.cdc .nm{font-size:26px;font-weight:700;line-height:1.15}
+.cdc .cue{font-size:14px;color:var(--dim);line-height:1.5}
+.clock{font-size:96px;font-weight:700;letter-spacing:-4px;line-height:1;text-align:center;padding:8px 0 2px;font-variant-numeric:tabular-nums}
+.ctr{display:flex;justify-content:center;align-items:center;gap:24px}
+.cb{width:56px;height:56px;border-radius:28px;border:1.5px solid var(--line2);background:transparent;display:flex;align-items:center;justify-content:center}
+.cb.main{width:76px;height:76px;border-radius:38px;border:none;background:var(--ink)}
+.flash{animation:fl .6s ease 2}
+@keyframes fl{50%{background:var(--red)}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><span class="d">Haspa · 25.04.27</span><span class="pill" id="cdown">–</span></header>
+
+<main>
+<section class="view on" id="v-week"></section>
+<section class="view" id="v-plan"></section>
+<section class="view" id="v-zones"></section>
+<section class="view" id="v-stats"></section>
+<section class="view" id="v-import"></section>
+</main>
+
+<nav class="nav" aria-label="Hauptnavigation">
+  <button class="on" data-v="week">WOCHE</button>
+  <button data-v="plan">PLAN</button>
+  <button data-v="zones">ZONEN</button>
+  <button data-v="stats">STATS</button>
+  <button data-v="import">IMPORT</button>
+</nav>
+
+<div class="sheet" id="sheet" aria-hidden="true">
+  <div class="sh" role="dialog" aria-modal="true" aria-labelledby="shT">
+    <h3 id="shT">Einheit</h3>
+    <div class="sub" id="shS"></div>
+    <div class="fl">
+      <div class="fld" id="fKmW"><label for="fKm">km</label><input id="fKm" type="number" inputmode="decimal" step="0.1" min="0"></div>
+      <div class="fld"><label for="fDu">Minuten</label><input id="fDu" type="number" inputmode="numeric" min="0"></div>
+      <div class="fld"><label for="fHr">Ø Puls</label><input id="fHr" type="number" inputmode="numeric" min="0"></div>
+    </div>
+    <div class="fld" style="margin-top:14px"><label>RPE</label><div class="rpe" id="rpe"></div></div>
+    <div class="fld" style="margin-top:14px"><label for="fNo">Notiz</label><input id="fNo" type="text" style="font-family:var(--sans)"></div>
+    <div class="sha">
+      <button class="btn ghost small" data-a="shQuick">Ohne Details</button>
+      <button class="btn small" data-a="shSave">Speichern</button>
+    </div>
+    <button class="btn ghost small" data-a="shClose" style="border-color:var(--line2);color:var(--dim)">Abbrechen</button>
+  </div>
+</div>
+
+<div class="cd" id="cd" role="dialog" aria-modal="true" aria-label="Cooldown"><div class="cdin" id="cdin"></div></div>
+
+<script>
+'use strict';
+// ───────── Konfiguration
+const START = new Date(2026,10,2);           // Mo 02.11.2026
+const RACE  = new Date(2027,3,25,9,30);      // So 25.04.2027
+const DAY = 864e5;
+const PH = [
+  {n:'Wiedereinstieg', hr:'≤ 150', note:'Alles locker nach Puls, nicht nach Tempo. Kommen Kopfschmerz oder Schwindel zurück: sofort pausieren.'},
+  {n:'Grundlage', hr:'≤ 157', note:'Frequenz und Long Run wachsen. Eine kurze Qualität pro Woche, der Rest Z2.'},
+  {n:'Aufbau', hr:'≤ 157', note:'Zwei Qualitäten pro Woche. Easy bleibt easy – Tempo gehört nur in die Qualität.'},
+  {n:'Marathonspezifisch', hr:'MP 4:59', note:'Marathon-Pace im Long Run. Verpflegung wie im Rennen üben.'},
+  {n:'Taper', hr:'frisch', note:'Volumen runter, Tempo bleibt. Mehr schlafen, nicht mehr trainieren.'}
+];
+const STR = {
+  E:'Einstieg (Technik vor Last): 3×8 Kniebeuge oder Trap Bar (RPE 6) · 3×8 Bulgarian Split Squat je Bein · 3×12 Calf Raises einbeinig · 2×30 s Copenhagen Plank',
+  A:'Aufbau: 4×5 Trap Bar Deadlift (RPE 7) · 3×6 Bulgarian Split Squat · 3×10 Calf Raises einbeinig mit Gewicht · 3×30 s Copenhagen Plank',
+  S:'Schwer: 4×3–5 Trap Bar oder Kniebeuge (RPE 8) · 3×5 Split Squat · 3×8 Calf Raises schwer · 3×5 Pogo Hops oder Box Jumps',
+  M:'Erhalt (gleiche Last, halbe Sätze): 2×3–5 Trap Bar · 2×5 Split Squat · 2×8 Calf Raises · 2×5 Pogo Hops',
+  O:'Oberkörper-Hypertrophie: 4×8–12 Bankdrücken · 4×8–12 Klimmzug oder Latzug · 3×10–12 Schulterdrücken · 3×12–15 Rudern · 3×12 Bizeps/Trizeps'
+};
+const KBDE='Am Tag der Qualitätseinheit nach dem Lauf, mindestens 48 h vor dem Long Run. Muskelkater am Long-Run-Tag heißt: zu viel.';
+
+// Bausteine
+const Z =(km,de)=>({ty:'run',ti:'Z2 Lauf',km,de:de||'Locker im Gesprächstempo. Puls-Grenze der Woche beachten.',ma:1,cd:'k'});
+const ZS=(km,n)=>({ty:'run',ti:'Z2 + Steigerungen',km,de:`Locker, zum Schluss ${n}×20 s Steigerungen (zügig, nicht sprinten), dazwischen gehen.`,ma:1,cd:'k'});
+const L =(km,de)=>({ty:'long',ti:'Long Run',km,de:de||'Ruhig und gleichmäßig in Z2. Nicht schneller werden, wenn es sich gut anfühlt.',ma:1,cd:'l',key:1});
+const Q =(ti,km,de)=>({ty:'qual',ti,km,de,ma:1,cd:'l'});
+const T =(ti,km,de)=>({ty:'test',ti,km,de,ma:1,cd:'l',key:1});
+const R =(ti,km,de)=>({ty:'race',ti,km,de,ma:1,cd:'l',key:1});
+const KB=(st,ma=1,de)=>({ty:'str',ti:'Kraft · Beine schwer',du:30,st,ma,cd:'l',de:de||(ma?KBDE:'Erholungswoche: nur 2 Sätze und nur, wenn du dich erholt fühlst.')});
+const KO=()=>({ty:'str',ti:'Kraft · Oberkörper',du:40,st:'O',ma:0,de:'Hypertrophie-Block bis Februar. Beliebiger Tag.'});
+const ZW=(du,de)=>({ty:'bike',ti:'Zwift',du,ma:0,de:de||'Locker Z1–Z2, Trittfrequenz 85–95.'});
+const SW=()=>({ty:'swim',ti:'Schwimmtechnik',du:40,ma:0,de:'Unter Wasser kontinuierlich ausatmen, beim Drehen kurz durch den Mund einatmen. Drills vor Strecke.'});
+const ZX=km=>({ty:'run',ti:'Extra Z2 Lauf',km,ma:0,cd:'k',de:'Nur wenn alles frisch ist. Ersetzt keine Pflicht-Einheit.'});
+
+// 25 Wochen: [Phase, Erholungswoche, Einheiten]
+const W = [
+[0,0,[Z(5),Z(5),Z(5),L(7,'Ruhig, Puls ≤150. Gehpausen sind erlaubt.'),KB('E'),KO(),ZW(45),SW()]],
+[0,0,[Z(6),Z(6),Z(6),L(8,'Ruhig, Puls ≤150.'),KB('E'),KO(),ZW(45),SW()]],
+[0,0,[Z(6),ZS(7,4),Z(7),L(10,'Ruhig, Puls ≤150.'),KB('E'),KO(),ZW(60),SW()]],
+[0,1,[Z(5),Z(5),Z(5),L(7,'Erholungswoche: bewusst kurz.'),KB('E',0),KO(),SW()]],
+[1,0,[Z(7),Q('Hügelsprints',9,'15 min Z2 · 8×10 s kräftig bergauf, gehend zurück · 10 min Z2. Helgoländer Allee passt.'),Z(6),L(12),KB('A'),KO(),ZW(60,'Z2 mit 3×5 min Sweetspot.'),SW()]],
+[1,0,[Z(7),ZS(8,6),Z(7),L(14),KB('A'),KO(),ZW(60,'Z2 mit 3×5 min Sweetspot.'),SW(),ZX(5)]],
+[1,0,[Z(7),Q('Fahrtspiel',9,'15 min Z2 · 6×1 min zügig (Z3–Z4), 2 min locker · 10 min Z2.'),Z(8),L(16),KB('A'),KO(),ZW(60),SW(),ZX(5)]],
+[1,1,[Z(6),ZS(6,4),Z(6),L(12,'Erholungswoche über die Feiertage.'),KB('A',0),KO(),SW()]],
+[1,0,[Z(8),Q('Fahrtspiel',10,'15 min Z2 · 5×2 min Z4, 2 min locker · 10 min Z2.'),Z(8),L(18),KB('A'),KO(),ZW(60),SW(),ZX(6)]],
+[1,0,[Z(8),Q('Tempo-Dauer',10,'15 min Z2 · 3×6 min an der Schwelle (~4:45/km), 2 min Trab · 10 min Z2.'),Z(8),L(20),KB('A'),KO(),ZW(60),SW(),ZX(6)]],
+[2,0,[Z(8),T('10-km-Test',14,'2 km einlaufen + Steigerungen · 10 km so schnell wie gleichmäßig möglich · 2 km auslaufen. Das Ergebnis kalibriert alle Tempos.'),Z(9),L(16,'Locker, frühestens 2 Tage nach dem Test.'),KB('S'),KO(),ZW(60,'Zwift Racing League oder locker Z2.'),SW()]],
+[2,0,[Z(8),Q('Schwelle 3×10',12,'15 min Z2 · 3×10 min @4:40–4:45, 2 min Trab · 10 min Z2.'),Q('800er',10,'15 min Z2 · 6×800 m @4:15–4:20, 2 min Trab · 10 min Z2.'),L(22),KB('S'),KO(),ZW(60,'Zwift Racing League oder locker Z2.'),SW()]],
+[2,0,[Z(8),Q('Schwelle 2×15',12,'15 min Z2 · 2×15 min @4:40–4:45, 3 min Trab · 10 min Z2.'),Q('1-km-Intervalle',12,'15 min Z2 · 5×1 km @4:25, 2 min Trab · 10 min Z2.'),L(24),KB('S'),KO(),ZW(60),SW(),ZX(6)]],
+[2,1,[Z(8),Q('Schwelle locker',10,'15 min Z2 · 4×5 min @4:45, 2 min Trab · 10 min Z2.'),Z(6),L(18,'Erholungswoche: ruhig.'),KB('S',0),KO(),SW()]],
+[2,0,[Z(8),Q('Schwelle 3×12',12,'15 min Z2 · 3×12 min @4:40, 2 min Trab · 10 min Z2.'),Q('1-km-Intervalle',12,'15 min Z2 · 6×1 km @4:25, 90 s Trab · 10 min Z2.'),L(26),KB('S'),KO(),ZW(60),SW(),ZX(6)]],
+[2,0,[Z(10),Q('Schwelle 25 min',12,'15 min Z2 · 25 min @4:40 am Stück · 10 min Z2.'),Q('1.600er',12,'15 min Z2 · 4×1.600 m @4:30, 2 min Trab · 10 min Z2.'),L(28),KB('S'),KO(),ZW(60),SW()]],
+[3,0,[Z(10),Q('MP-Blöcke',12,'3 km Z2 · 2×4 km @4:59, 1 km Trab · 1 km aus.'),Z(10),L(28,'Z2, die letzten 6 km @4:59. Gel alle 30 min testen.'),KB('M'),ZW(60,'Locker, Regeneration.'),SW(),ZX(6)]],
+[3,0,[Z(10),Q('MP 8 km',14,'3 km Z2 · 8 km @4:59 · 3 km aus.'),Z(10),L(30,'Z2 mit 3×5 km @4:59, dazwischen 1 km Z2. Verpflegung wie im Rennen.'),KB('M'),ZW(60,'Locker, Regeneration.'),SW(),ZX(6)]],
+[3,0,[Z(12),Q('Schwelle 3×3 km',12,'3 km Z2 · 3×3 km @4:40, 2 min Trab · 2 km aus.'),Z(10),L(32,'Längster Lauf. Rein Z2, Gel alle 30 min.'),KB('M'),ZW(60,'Locker, Regeneration.'),SW(),ZX(6)]],
+[3,0,[Z(8,'Locker, Beine wach.'),Q('HM-Aktivierung',6,'2 km Z2 · 3×1 km @4:44, 2 min Trab · 1 km aus.'),ZS(5,4),R('Halbmarathon Hamburg',21.1,'So 21.03. Ziel ≈ 1:40 (4:44/km). Erste 5 km bei 4:48–4:50. Zeit × 2,1 ≈ Marathon-Prognose.'),KB('M',0,'Nur Mo oder Di, halbe Sätze.'),SW()]],
+[3,1,[Z(8,'Erst ab Dienstag, ganz locker.'),Q('MP 5 km',10,'3 km Z2 · 5 km @4:59 · 2 km aus.'),Z(10),L(24),KB('M'),SW()]],
+[3,0,[Z(10),Q('Schwelle 2×4 km',12,'3 km Z2 · 2×4 km @4:40, 3 min Trab · 1 km aus.'),Z(12),L(32,'Generalprobe: Z2, letzte 12 km @4:59. Komplette Rennverpflegung, Rennschuhe.'),KB('M'),SW(),ZX(6)]],
+[4,0,[Z(10),Q('MP 6 km',10,'2 km Z2 · 6 km @4:59 · 2 km aus.'),Z(8),L(24,'Z2, ruhig.'),KB('M',1,'Letzte Kraft-Einheit. Halbe Sätze.'),SW()]],
+[4,0,[Z(8),Q('MP 4×1 km',8,'2 km Z2 · 4×1 km @4:59, 1 min Trab · 2 km aus.'),Z(8),L(16,'Locker. Ab jetzt keine Kraft mehr.'),SW()]],
+[4,0,[Z(6,'Montag: locker, Beine wach.'),Q('MP-Erinnerung',6,'Mittwoch: 2 km Z2 · 3×1 km @4:59 · 1 km aus.'),ZS(4,4),R('Haspa Marathon',42.2,'So 25.04. Ziel 3:30 · 4:59/km. Erste 10 km bewusst bei 5:02–5:05. Gel alle 30 min ab km 8, Salz separat.')]]
+];
+const RUN=['run','long','qual','test','race'];
+const P = W.map(([ph,rec,items],wi)=>{
+  const s=new Date(START.getTime()+wi*7*DAY), e=new Date(s.getTime()+6*DAY);
+  const wk=items.map((w,i)=>({...w,id:`w${wi+1}-${i}`,wi}));
+  const lr=wk.find(w=>w.ty==='long'||w.ty==='race');
+  return {wi,ph,rec,s,e,wk,plan:sum(wk.filter(w=>w.ma&&RUN.includes(w.ty)).map(w=>w.km)),lr:lr?lr.km:0};
+});
+const ALL=P.flatMap(w=>w.wk);
+const byId=id=>ALL.find(w=>w.id===id);
+
+// Cooldown-Routinen
+const CD={
+  l:{n:'Lang', m:10, ex:[
+    {n:'Blackroll Waden',c:'Blackroll',s:40,sd:2,q:'Wade auf die Rolle, anderes Bein drüberlegen für mehr Druck. Langsam von der Achillessehne bis unter die Kniekehle.'},
+    {n:'Blackroll Oberschenkel vorne',c:'Blackroll',s:40,sd:2,q:'Bauchlage, Rolle unter dem Oberschenkel. Von der Hüfte bis kurz über dem Knie, das Knie selbst nicht rollen.'},
+    {n:'Blackroll Gesäß',c:'Blackroll',s:40,sd:2,q:'Auf die Rolle setzen, Fußgelenk aufs andere Knie legen und leicht zur Seite des gekreuzten Beins kippen.'},
+    {n:'Blackroll seitliche Hüfte',c:'Blackroll',s:30,sd:2,q:'Seitlage, Rolle knapp unter dem Hüftknochen. Kleine Bewegungen, nicht über das IT-Band rollen.'},
+    {n:'Hüftbeuger im Kniestand',c:'Hüfte · Dehnen',s:30,sd:2,q:'Halber Kniestand, Po anspannen, Becken leicht nach vorn schieben. Oberkörper aufrecht.'},
+    {n:'90/90-Hüftrotation',c:'Hüfte · Mobilität',s:60,sd:1,q:'Im Sitzen, beide Knie 90°. Langsam von Seite zu Seite kippen, Oberkörper aufrecht.'},
+    {n:'Hamstrings stehend',c:'Dehnen',s:30,sd:2,q:'Ferse auf eine Erhöhung, Bein gestreckt, Rücken gerade. Aus der Hüfte nach vorn kippen.'},
+    {n:'Wade an der Wand gestreckt',c:'Dehnen',s:20,sd:2,q:'Hände an der Wand, hinteres Bein gestreckt, Ferse bleibt am Boden.'},
+    {n:'Wade an der Wand gebeugt',c:'Dehnen',s:20,sd:2,q:'Gleiche Position, hinteres Knie leicht beugen. Dehnt den tiefen Wadenmuskel.'}]},
+  k:{n:'Kurz', m:5, ex:[
+    {n:'Blackroll Waden',c:'Blackroll',s:30,sd:2,q:'Wade auf die Rolle, anderes Bein drüberlegen für mehr Druck. Langsam von der Achillessehne bis unter die Kniekehle.'},
+    {n:'Hüftbeuger im Kniestand',c:'Hüfte · Dehnen',s:30,sd:2,q:'Halber Kniestand, Po anspannen, Becken leicht nach vorn schieben. Oberkörper aufrecht.'},
+    {n:'90/90-Hüftrotation',c:'Hüfte · Mobilität',s:60,sd:1,q:'Im Sitzen, beide Knie 90°. Langsam von Seite zu Seite kippen, Oberkörper aufrecht.'},
+    {n:'Hamstrings stehend',c:'Dehnen',s:30,sd:2,q:'Ferse auf eine Erhöhung, Bein gestreckt, Rücken gerade. Aus der Hüfte nach vorn kippen.'},
+    {n:'Wade an der Wand',c:'Dehnen',s:30,sd:2,q:'Hände an der Wand, hinteres Bein gestreckt, Ferse am Boden. Zum Ende das Knie leicht beugen.'}]}
+};
+
+// ───────── Zustand
+const KEY='haspa27';
+let S={logs:{},cd:{},extra:[],gk:[]};
+try{const d=JSON.parse(localStorage.getItem(KEY)||'null');if(d)S={...S,...d};}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){alert('Speichern fehlgeschlagen. Bitte ein Backup exportieren.');}}
+let view='week', vwi=cwi(), aph=P[vwi].ph, openW=new Set([vwi]), openC=new Set(), pid=null, rpe=null, gm=[];
+
+// ───────── Helfer
+function sum(a){return a.reduce((s,x)=>s+(+x||0),0);}
+function cwi(){return Math.max(0,Math.min(Math.floor((Date.now()-START)/(7*DAY)),P.length-1));}
+function f1(n){return (Math.round(n*10)/10).toLocaleString('de-DE',{minimumFractionDigits:1,maximumFractionDigits:1});}
+function pad(n){return String(n).padStart(2,'0');}
+const MON=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'];
+function rng(w){const a=w.s,b=w.e;return a.getMonth()===b.getMonth()?`${pad(a.getDate())}.–${pad(b.getDate())}. ${MON[b.getMonth()]}`:`${pad(a.getDate())}. ${MON[a.getMonth()]}–${pad(b.getDate())}. ${MON[b.getMonth()]}`;}
+function pace(km,du){if(!km||!du)return'';const s=du*60/km;return `${Math.floor(s/60)}:${pad(Math.round(s%60))}`;}
+function esc(t){return String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function wkKm(wi){return sum(P[wi].wk.filter(w=>RUN.includes(w.ty)&&S.logs[w.id]).map(w=>S.logs[w.id].km))+sum(S.extra.filter(x=>x.wi===wi&&x.ty==='run').map(x=>x.km));}
+function wkLr(wi){const w=P[wi].wk.find(x=>(x.ty==='long'||x.ty==='race')&&S.logs[x.id]);return w?(S.logs[w.id].km||0):0;}
+const CHECK='<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>';
+
+// ───────── Karten
+function card(w){
+  const l=S.logs[w.id], d=!!l, isRun=RUN.includes(w.ty);
+  let meta;
+  if(d){meta=[l.km?`${f1(l.km)} km`:'',isRun&&l.km&&l.du?`${pace(l.km,l.du)}/km`:(l.du?`${l.du} min`:''),l.hr?`Ø${l.hr}`:'',l.rpe?`RPE ${l.rpe}`:''].filter(Boolean).join(' · ')||'erledigt';}
+  else{meta=w.km?`~${f1(w.km)} km`:`${w.du} min`;if(w.ty==='long'||w.ty==='run')meta+=` · ${PH[P[w.wi].ph].hr}`;}
+  const tag=w.ty==='race'?'RACE':w.ty==='test'?'TEST':w.key?'KEY':'';
+  const right=d&&w.cd?(S.cd[w.id]?'<span class="cdok">COOLDOWN ✓</span>':`<button class="cdb" data-a="cd" data-id="${w.id}">COOLDOWN ›</button>`):(tag&&!d?`<span class="tag">${tag}</span>`:'');
+  const st=w.st?`<div class="st">${esc(STR[w.st])}</div>`:'';
+  const cl=w.cd?`<button class="lnk" data-a="cd" data-id="${w.id}">Cooldown ${CD[w.cd].n.toLowerCase()} starten (${CD[w.cd].m} min)</button>`:'';
+  const nt=d&&l.note?`<div class="st">„${esc(l.note)}“</div>`:'';
+  return `<div class="wo${d?' done':''}${w.key&&!d?' key':''}${w.ma?'':' opt'}${openC.has(w.id)?' open':''}">
+  <div class="r"><button class="ck" data-a="tog" data-id="${w.id}" aria-label="${d?'Erledigt – rückgängig machen':'Abhaken'}">${d?CHECK:''}</button>
+  <button class="bd" data-a="exp" data-id="${w.id}" aria-expanded="${openC.has(w.id)}"><div class="ti">${esc(w.ti)}</div><div class="me">${esc(meta)}</div></button>${right}</div>
+  <div class="ex">${esc(w.de||'')}${st}${nt}${cl}</div></div>`;
+}
+
+// ───────── Woche
+function rWeek(){
+  const w=P[vwi], km=wkKm(vwi), ma=w.wk.filter(x=>x.ma), dn=ma.filter(x=>S.logs[x.id]).length;
+  const pc=w.plan?Math.min(100,Math.round(km/w.plan*100)):0, cur=vwi===cwi();
+  const op=w.wk.filter(x=>!x.ma);
+  document.getElementById('v-week').innerHTML=`
+  <div class="wkhead"><div><h1>Woche ${pad(vwi+1)}</h1><div class="sub">${PH[w.ph].n}${w.rec?' · Erholung':''} · ${rng(w)}</div>
+  <button class="today${cur?'':' on'}" data-a="today">Zur aktuellen Woche</button></div>
+  <div class="arrows"><button class="arr" data-a="prev" aria-label="Vorherige Woche" ${vwi<=0?'disabled':''}>‹</button><button class="arr" data-a="next" aria-label="Nächste Woche" ${vwi>=P.length-1?'disabled':''}>›</button></div></div>
+  <div class="hero"><div class="row"><div><span class="big">${f1(km)}</span><span class="of">/ ${f1(w.plan)} km</span></div><span class="mono" style="font-size:12px">${pc} %</span></div>
+  <div class="bar"><div style="width:${pc}%"></div></div>
+  <div class="g3"><div><div class="lab">Puls</div><div class="val">${PH[w.ph].hr}</div></div><div><div class="lab">Long Run</div><div class="val">${w.lr?f1(w.lr)+' km':'–'}</div></div><div><div class="lab">Pflicht</div><div class="val">${dn} / ${ma.length}</div></div></div></div>
+  <p class="note">${esc(PH[w.ph].note)}</p>
+  <div class="sec">Pflicht</div><div class="list">${ma.map(card).join('')}</div>
+  ${op.length?`<div class="sec">Optional</div><div class="list">${op.map(card).join('')}</div>`:''}`;
+}
+
+// ───────── Plan
+function rPlan(){
+  const ci=cwi();
+  let h=`<div class="phs">${PH.map((p,i)=>`<button class="phb${i===aph?' on':''}" data-a="ph" data-i="${i}">${p.n}</button>`).join('')}</div>`;
+  P.filter(w=>w.ph===aph).forEach(w=>{
+    const ma=w.wk.filter(x=>x.ma),dn=ma.filter(x=>S.logs[x.id]).length,o=openW.has(w.wi);
+    h+=`<div class="wr${w.wi===ci?' cur':''}${o?' open':''}"><button class="wh" data-a="wk" data-i="${w.wi}" aria-expanded="${o}"><span class="wn">${pad(w.wi+1)}</span><span class="wm"><div class="wt">${rng(w)}${w.rec?' · Erholung':''}</div><div class="wd">${f1(w.plan)} km · Long Run ${f1(w.lr)} km</div></span><span class="wp">${dn}/${ma.length}<br>${f1(wkKm(w.wi))} km</span></button>
+    <div class="wb">${o?`<div class="list" style="margin:0">${w.wk.map(card).join('')}</div>`:''}</div></div>`;
+  });
+  document.getElementById('v-plan').innerHTML=h;
+}
+
+// ───────── Zonen
+function rZones(){
+  const Zs=[['Z1','Regeneration','≤ 137','#E2E2E4'],['Z2','Grundlage','138–157','#C8C8CA'],['Z3','Tempo','158–165','#686869'],['Z4','Schwelle','166–175','#0A0A0A'],['Z5','VO2max','176–191','#FF4557']];
+  const Pa=[['Z2 Lauf (Puls zählt)','5:30–6:00'],['Long Run','5:35–6:00'],['Marathon-Pace (3:30)','4:59'],['HM-Pace (1:40)','4:44'],['Schwelle','4:35–4:45'],['1-km-Intervalle','4:20–4:30'],['800er','4:10–4:20']];
+  const rt=k=>CD[k].ex.map(e=>`<div class="cl"><span>${esc(e.n)}</span><span>${e.s} s${e.sd>1?' je Seite':''}</span></div>`).join('');
+  document.getElementById('v-zones').innerHTML=`
+  <div class="card"><h2>Pulszonen</h2><p>Leistungsdiagnostik April 2025 · Schwelle 175 · Max 191</p><div style="margin-top:10px">
+  ${Zs.map(z=>`<div class="zr"><div class="zb" style="background:${z[3]};color:${z[0]==='Z3'||z[0]==='Z4'?'#FFFFFF':'#0A0A0A'}">${z[0]}</div><span class="zn">${z[1]}</span><span class="zv">${z[2]}</span></div>`).join('')}</div></div>
+  <div class="card"><h2>Tempos</h2><p>Werden nach dem 10-km-Test (Woche 11) und dem Halbmarathon am 21.03. neu kalibriert.</p><div style="margin-top:10px">
+  ${Pa.map(p=>`<div class="pr"><span>${p[0]}</span><span class="zv">${p[1]}</span></div>`).join('')}</div></div>
+  <div class="card"><h2>Cooldown kurz · 5 min</h2><p>Nach lockeren Läufen.</p><div style="margin-top:8px">${rt('k')}</div><button class="btn" data-a="cdfree" data-k="k">Kurz starten</button></div>
+  <div class="card"><h2>Cooldown lang · 10 min</h2><p>Nach Long Run, Qualität und Kraft.</p><div style="margin-top:8px">${rt('l')}</div><button class="btn" data-a="cdfree" data-k="l">Lang starten</button></div>
+  <div class="card"><h2>Kraft steuern</h2><p>Eine schwere Bein-Einheit pro Woche, am Tag der Qualität nach dem Lauf. Mindestens 48 h vor dem Long Run. In den letzten 10 Tagen vor dem Rennen keine Kraft.</p></div>`;
+}
+
+// ───────── Stats
+function rStats(){
+  const ci=cwi();
+  const tot=sum(P.map((w,i)=>wkKm(i)));
+  const lrMax=Math.max(0,...P.map((w,i)=>wkLr(i)));
+  const due=P.slice(0,ci+1).flatMap(w=>w.wk.filter(x=>x.ma)); const dd=due.filter(x=>S.logs[x.id]).length;
+  const cdA=ALL.filter(w=>w.cd&&S.logs[w.id]); const cdD=cdA.filter(w=>S.cd[w.id]).length;
+  const q=(a,b)=>b?Math.round(a/b*100):0;
+  // Chart Wochen-km
+  const W0=350,H0=150,pl=26,pb=18,bw=(W0-pl)/P.length;
+  const mx=Math.max(...P.map(w=>w.plan),...P.map((w,i)=>wkKm(i)),10);
+  let c1=`<svg class="chart" viewBox="0 0 ${W0} ${H0}" role="img" aria-label="Wochen-Kilometer geplant und gelaufen">`;
+  [0,.5,1].forEach(f=>{const y=(H0-pb)*(1-f)+2;c1+=`<line x1="${pl}" x2="${W0}" y1="${y}" y2="${y}" stroke="#E2E2E4"/><text x="${pl-4}" y="${y+3}" font-size="8" text-anchor="end" fill="#686869" font-family="JetBrains Mono">${Math.round(mx*f)}</text>`;});
+  P.forEach((w,i)=>{const x=pl+i*bw,hp=(w.plan/mx)*(H0-pb-2),ha=(wkKm(i)/mx)*(H0-pb-2);
+    c1+=`<rect x="${x+1}" y="${H0-pb-hp}" width="${bw-2}" height="${hp}" rx="1.5" fill="#E2E2E4"/>`;
+    if(ha)c1+=`<rect x="${x+bw*.25}" y="${H0-pb-ha}" width="${bw*.5}" height="${ha}" rx="1" fill="#0A0A0A"/>`;
+    if(i===ci)c1+=`<rect x="${x+.5}" y="${H0-pb-hp-.5}" width="${bw-1}" height="${hp+1}" rx="1.5" fill="none" stroke="#FF4557" stroke-width="1.5"/>`;
+    if(i%4===0)c1+=`<text x="${x+bw/2}" y="${H0-5}" font-size="8" text-anchor="middle" fill="#686869" font-family="JetBrains Mono">${i+1}</text>`;});
+  c1+='</svg>';
+  // Chart Long Run
+  const mx2=43; let pts=P.map((w,i)=>`${pl+i*bw+bw/2},${H0-pb-(w.lr/mx2)*(H0-pb-4)}`).join(' ');
+  let c2=`<svg class="chart" viewBox="0 0 ${W0} ${H0}" role="img" aria-label="Long-Run-Verlauf">`;
+  [10,20,30,40].forEach(v=>{const y=H0-pb-(v/mx2)*(H0-pb-4);c2+=`<line x1="${pl}" x2="${W0}" y1="${y}" y2="${y}" stroke="#E2E2E4"/><text x="${pl-4}" y="${y+3}" font-size="8" text-anchor="end" fill="#686869" font-family="JetBrains Mono">${v}</text>`;});
+  c2+=`<polyline points="${pts}" fill="none" stroke="#C8C8CA" stroke-width="2" stroke-linejoin="round"/>`;
+  P.forEach((w,i)=>{const a=wkLr(i),x=pl+i*bw+bw/2;if(a)c2+=`<circle cx="${x}" cy="${H0-pb-(a/mx2)*(H0-pb-4)}" r="4" fill="#FF4557" stroke="#0A0A0A" stroke-width="1"/>`;if(i%4===0)c2+=`<text x="${x}" y="${H0-5}" font-size="8" text-anchor="middle" fill="#686869" font-family="JetBrains Mono">${i+1}</text>`;});
+  c2+='</svg>';
+  // Feed
+  const fe=[...ALL.filter(w=>S.logs[w.id]).map(w=>({t:w.ti,l:S.logs[w.id],wi:w.wi})),...S.extra.map(x=>({t:x.title||'Extra',l:x,wi:x.wi}))].sort((a,b)=>(b.l.ts||0)-(a.l.ts||0)).slice(0,12);
+  document.getElementById('v-stats').innerHTML=`
+  <div class="tiles">
+   <div class="tile"><div class="lab mono">Lauf-km gesamt</div><div class="n">${f1(tot)}</div></div>
+   <div class="tile"><div class="lab mono">Längster Lauf</div><div class="n">${f1(lrMax)}<small>km</small></div></div>
+   <div class="tile"><div class="lab mono">Pflicht bis heute</div><div class="n">${q(dd,due.length)}<small>%</small></div></div>
+   <div class="tile"><div class="lab mono">Cooldown-Quote</div><div class="n">${q(cdD,cdA.length)}<small>%</small></div></div>
+  </div>
+  <div class="card"><h2>Wochen-km</h2>${c1}<div class="lg"><span><i style="background:#E2E2E4"></i>Plan</span><span><i style="background:#0A0A0A"></i>Gelaufen</span><span><i style="border:1.5px solid #FF4557;box-sizing:border-box"></i>Jetzt</span></div></div>
+  <div class="card"><h2>Long Run</h2>${c2}<div class="lg"><span><i style="background:#C8C8CA"></i>Plan</span><span><i style="background:#FF4557"></i>Gelaufen</span></div></div>
+  <div class="card"><h2>Letzte Einheiten</h2><div style="margin-top:8px">${fe.length?fe.map(e=>`<div class="fi"><span>${esc(e.t)}<div class="me">Woche ${pad(e.wi+1)}${e.l.ts?' · '+new Date(e.l.ts).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}):''}</div></span><span class="me">${e.l.km?f1(e.l.km)+' km':''}${e.l.hr?'<br>Ø'+e.l.hr:''}</span></div>`).join(''):'<p>Hake deine erste Einheit ab oder importiere eine Garmin-CSV.</p>'}</div></div>`;
+}
+
+// ───────── Import
+function rImport(){
+  let h='';
+  if(!gm.length){
+    h+=`<div class="drop"><input type="file" accept=".csv,text/csv" id="gfile" aria-label="Garmin-CSV auswählen"><b>Garmin-CSV importieren</b><span>Garmin Connect › Aktivitäten › Alle Aktivitäten › CSV exportieren</span></div>`;
+  }else{
+    const ok=gm.filter(m=>m.ok).length;
+    h+=`<div class="sec">${gm.length} Aktivitäten · ${ok} bestätigt</div>`;
+    gm.forEach((m,i)=>{const a=m.a;
+      const opts=cands(a).map(w=>`<option value="${w.id}"${m.to===w.id?' selected':''}>${esc(w.ti)} · ${w.km?f1(w.km)+' km':w.du+' min'}</option>`).join('');
+      h+=`<div class="gm${m.ok?' ok':''}${m.skip?' skip':''}"><div class="t">${esc(a.title||a.raw)}</div>
+      <div class="me">${a.date.toLocaleDateString('de-DE',{weekday:'short',day:'2-digit',month:'2-digit'})} · ${a.wi>=0&&a.wi<P.length?'Woche '+pad(a.wi+1):'außerhalb des Plans'} · ${[a.km?f1(a.km)+' km':'',a.du?Math.round(a.du)+' min':'',a.hr?'Ø'+a.hr:''].filter(Boolean).join(' · ')}</div>
+      ${m.dup?'<div class="me" style="color:var(--ink)">Bereits importiert</div>':`<select data-a="gsel" data-i="${i}" aria-label="Zuordnung">${opts}<option value="extra"${m.to==='extra'?' selected':''}>Als Extra-Einheit</option><option value="none"${m.to==='none'?' selected':''}>Nicht importieren</option></select>
+      <div class="act"><button class="${m.ok?'':'p'}" data-a="gok" data-i="${i}">${m.ok?'Bestätigt ✓':'Bestätigen'}</button><button data-a="gskip" data-i="${i}">${m.skip?'Übersprungen':'Überspringen'}</button></div>`}</div>`;});
+    h+=`<button class="btn" data-a="gall">Alle Vorschläge bestätigen</button><button class="btn" data-a="gcommit" ${ok?'':'disabled'}>${ok} Aktivität${ok===1?'':'en'} importieren</button><button class="btn ghost" data-a="greset">Andere CSV wählen</button>`;
+  }
+  h+=`<div class="card" style="margin-top:22px"><h2>Backup</h2><p>Deine Daten liegen nur in diesem Browser. Exportiere regelmäßig ein Backup, zum Beispiel nach jedem Monats-Check-in.</p>
+  <button class="btn" data-a="bexp">Backup exportieren</button>
+  <label class="btn ghost" style="text-align:center;position:relative;overflow:hidden">Backup importieren<input type="file" accept=".json,application/json" id="bfile" style="position:absolute;inset:0;opacity:0"></label>
+  <button class="btn ghost" data-a="breset" style="border-color:var(--line2);color:var(--dim)">Alle Daten löschen</button></div>`;
+  document.getElementById('v-import').innerHTML=h;
+}
+
+// ───────── Garmin
+const HD={type:['Activity Type','Aktivitätstyp'],date:['Date','Datum'],title:['Title','Titel'],dist:['Distance','Distanz'],time:['Time','Zeit'],hr:['Avg HR','Ø Herzfrequenz','Durchschnittliche Herzfrequenz']};
+function csvRows(t){const out=[];let row=[],c='',q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch==='"'){if(t[i+1]==='"'){c+='"';i++;}else q=false;}else c+=ch;}else if(ch==='"')q=true;else if(ch===','){row.push(c);c='';}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&t[i+1]==='\n')i++;row.push(c);out.push(row);row=[];c='';}else c+=ch;}if(c||row.length){row.push(c);out.push(row);}return out.filter(r=>r.some(x=>x.trim()));}
+function num(v){if(!v||v==='--')return null;v=String(v).trim();if(v.includes(',')&&!v.includes('.'))v=v.replace(',','.');else v=v.replace(/,/g,'');const n=parseFloat(v);return isNaN(n)?null:n;}
+function dur(v){if(!v||v==='--')return null;const p=v.split(':').map(x=>parseFloat(x.replace(',','.')));if(p.length===3)return p[0]*60+p[1]+p[2]/60;if(p.length===2)return p[0]+p[1]/60;return null;}
+function pdate(v){let m=v.match(/^(\d{4})-(\d{2})-(\d{2})[ T]?(\d{2})?:?(\d{2})?/);if(m)return new Date(+m[1],+m[2]-1,+m[3],+(m[4]||0),+(m[5]||0));m=v.match(/^(\d{2})\.(\d{2})\.(\d{4})\s*(\d{2})?:?(\d{2})?/);if(m)return new Date(+m[3],+m[2]-1,+m[1],+(m[4]||0),+(m[5]||0));const d=new Date(v);return isNaN(d)?null:d;}
+function gtype(t){t=t.toLowerCase();if(/lauf|run/.test(t))return'run';if(/rad|cycl|bike|zwift|virtual/.test(t))return'bike';if(/schwimm|swim/.test(t))return'swim';if(/kraft|strength|fitness|hiit/.test(t))return'str';return null;}
+function cands(a){const w=P[a.wi];if(!w)return[];return w.wk.filter(x=>!S.logs[x.id]&&(a.ty==='run'?RUN.includes(x.ty):x.ty===a.ty));}
+function gparse(text){
+  const rows=csvRows(text.replace(/^\uFEFF/,''));if(rows.length<2)return alert('Die Datei enthält keine Aktivitäten.');
+  const hd=rows[0].map(h=>h.trim()),ix={};for(const k in HD)ix[k]=hd.findIndex(h=>HD[k].includes(h));
+  if(ix.type<0||ix.date<0)return alert('Das ist keine Garmin-Aktivitäten-CSV: Spalten „Activity Type“ und „Date“ fehlen.');
+  const used=new Set();
+  gm=rows.slice(1).map(r=>{const raw=r[ix.type]||'',ty=gtype(raw),date=pdate(r[ix.date]||'');if(!ty||!date)return null;
+    let km=num(r[ix.dist]);if(ty==='swim'&&km>100)km=km/1000;
+    const a={raw,ty,date,title:r[ix.title]||raw,km:km||0,du:dur(r[ix.time]),hr:num(r[ix.hr]),wi:Math.floor((new Date(date.getFullYear(),date.getMonth(),date.getDate())-START)/(7*DAY))};
+    const k=`${date.getTime()}|${a.title}`,dup=S.gk.includes(k);
+    let to='extra';
+    if(a.wi<0||a.wi>=P.length)to='none';
+    else{const c=cands(a).filter(x=>!used.has(x.id));if(c.length){let b;
+      if(a.ty==='run'){const lr=c.find(x=>x.ty==='long'||x.ty==='race');b=lr&&a.km>=lr.km*0.8?lr:c.filter(x=>x.ty!=='long'&&x.ty!=='race').sort((x,y)=>Math.abs(x.km-a.km)-Math.abs(y.km-a.km))[0]||c[0];}
+      else b=c.sort((x,y)=>(y.ma-x.ma))[0];
+      to=b.id;used.add(b.id);}}
+    return{a,k,dup,to,ok:false,skip:dup};}).filter(Boolean).sort((x,y)=>y.a.date-x.a.date);
+  if(!gm.length)alert('Keine Lauf-, Rad-, Schwimm- oder Kraft-Aktivitäten gefunden.');
+  rImport();
+}
+function gcommit(){
+  let n=0;
+  gm.forEach(m=>{if(!m.ok||m.skip||m.dup||m.to==='none')return;const a=m.a,l={km:a.km?Math.round(a.km*100)/100:null,du:a.du?Math.round(a.du):null,hr:a.hr?Math.round(a.hr):null,rpe:null,note:'',ts:a.date.getTime(),src:'garmin'};
+    if(m.to==='extra')S.extra.push({...l,wi:a.wi,ty:a.ty,title:a.title});else S.logs[m.to]=l;S.gk.push(m.k);n++;});
+  save();gm=[];rImport();
+  const v=document.getElementById('v-import');v.insertAdjacentHTML('afterbegin',`<div class="msg">${n} Aktivität${n===1?'':'en'} importiert.</div>`);
+}
+
+// ───────── Log-Sheet
+function openSheet(id){
+  const w=byId(id);pid=id;rpe=null;
+  document.getElementById('shT').textContent=w.ti;
+  document.getElementById('shS').textContent=`Woche ${pad(w.wi+1)} · geplant ${w.km?'~'+f1(w.km)+' km':w.du+' min'}`;
+  document.getElementById('fKmW').style.display=w.km?'':'none';
+  ['fKm','fDu','fHr','fNo'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('rpe').innerHTML=Array.from({length:10},(_,i)=>`<button data-a="rpe" data-n="${i+1}">${i+1}</button>`).join('');
+  const s=document.getElementById('sheet');s.classList.add('on');s.setAttribute('aria-hidden','false');
+}
+function closeSheet(){const s=document.getElementById('sheet');s.classList.remove('on');s.setAttribute('aria-hidden','true');pid=null;}
+function saveSheet(quick){
+  if(!pid)return;const g=i=>parseFloat(String(document.getElementById(i).value).replace(',','.'))||null;
+  S.logs[pid]=quick?{km:byId(pid).km||null,ts:Date.now()}:{km:g('fKm'),du:g('fDu'),hr:g('fHr'),rpe,note:document.getElementById('fNo').value.trim(),ts:Date.now()};
+  save();closeSheet();render();
+}
+
+// ───────── Cooldown-Timer
+let C=null,tick=null,actx=null,wl=null;
+function cdSteps(k){const st=[];CD[k].ex.forEach((e,ei)=>{for(let s=0;s<e.sd;s++)st.push({ei,side:e.sd>1?(s===0?'Rechte Seite':'Linke Seite'):null,sec:e.s});});return st;}
+function cdOpen(k,wid){C={k,wid,st:cdSteps(k),i:0,left:0,run:false,fin:false};C.left=C.st[0].sec;document.getElementById('cd').classList.add('on');document.body.style.overflow='hidden';rCd();}
+function cdClose(){clearInterval(tick);tick=null;C=null;relWL();document.getElementById('cd').classList.remove('on');document.body.style.overflow='';render();}
+function beep(f=880,d=.15){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.frequency.value=f;o.connect(g);g.connect(actx.destination);g.gain.setValueAtTime(.25,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);o.start();o.stop(actx.currentTime+d);}catch(e){}}
+function vib(p){try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}}
+async function reqWL(){try{if('wakeLock' in navigator)wl=await navigator.wakeLock.request('screen');}catch(e){}}
+function relWL(){try{wl&&wl.release();}catch(e){}wl=null;}
+function cdPlay(){if(!C||C.fin)return;C.run=!C.run;if(C.run){beep(660,.08);reqWL();tick=setInterval(cdTick,1000);}else{clearInterval(tick);tick=null;}rCd();}
+function cdTick(){if(!C)return;C.left--;if(C.left<=3&&C.left>0)beep(520,.06);if(C.left<=0){cdGo(1,true);return;}rCd();}
+function cdGo(d,auto){if(!C)return;const ni=C.i+d;if(ni<0)return;
+  if(ni>=C.st.length){clearInterval(tick);tick=null;C.run=false;C.fin=true;beep(988,.3);vib([200,100,200]);relWL();rCd();return;}
+  const sideSw=C.st[ni].ei===C.st[C.i].ei;C.i=ni;C.left=C.st[ni].sec;if(auto){beep(sideSw?740:988,.2);vib(sideSw?[120,80,120]:300);}rCd(auto&&sideSw);}
+function cdFinish(){if(C&&C.wid){S.cd[C.wid]=Date.now();save();}cdClose();}
+function cdSwitch(k){if(!C||C.k===k)return;clearInterval(tick);tick=null;cdOpen(k,C.wid);}
+function rCd(flash){
+  const el=document.getElementById('cdin'),R=CD[C.k];
+  const w=C.wid?byId(C.wid):null;
+  const seg=`<div class="seg" role="group" aria-label="Länge"><button class="${C.k==='k'?'on':''}" data-a="cdk" data-k="k">KURZ 5′</button><button class="${C.k==='l'?'on':''}" data-a="cdk" data-k="l">LANG 10′</button></div>`;
+  if(C.fin){el.innerHTML=`<div class="cdtop"><button class="back" data-a="cdx">‹ ZURÜCK</button>${seg}</div><div><h1>Geschafft</h1><div class="sub">Cooldown ${R.n.toLowerCase()} komplett${w?' · nach '+esc(w.ti):''}.</div></div><div style="flex-grow:1"></div><button class="btn" data-a="cdfin">Cooldown abschließen ✓</button>`;return;}
+  const s=C.st[C.i],e=R.ex[s.ei],pct=Math.round((1-C.left/s.sec)*100);
+  const nx=R.ex.slice(s.ei+1,s.ei+3);
+  const icon=C.run?'<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"><path d="M9 6v12M15 6v12"/></svg>':'<svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF"><path d="M8 5v14l11-7z"/></svg>';
+  el.innerHTML=`<div class="cdtop"><button class="back" data-a="cdx">‹ ZURÜCK</button>${seg}</div>
+  <div><h1 style="font-size:34px">Cooldown</h1><div class="sub">${w?'Nach '+esc(w.ti)+' · ':''}Übung ${s.ei+1} von ${R.ex.length}</div></div>
+  <div class="steps" style="grid-template-columns:repeat(${R.ex.length},minmax(0,1fr))">${R.ex.map((_,i)=>`<div class="${i<s.ei?'d':i===s.ei?'c':''}"></div>`).join('')}</div>
+  <div class="cdc${flash?' flash':''}"><div class="h"><span class="lab mono">${esc(e.c)}</span>${s.side?`<span class="tag">${s.side.toUpperCase()}</span>`:''}</div>
+   <div class="nm">${esc(e.n)}</div><div class="cue">${esc(e.q)}</div>
+   <div class="clock" aria-live="polite">${Math.floor(C.left/60)}:${pad(C.left%60)}</div>
+   <div class="bar"><div style="width:${pct}%"></div></div></div>
+  <div class="ctr"><button class="cb" data-a="cdprev" aria-label="Vorherige Übung"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+   <button class="cb main" data-a="cdplay" aria-label="${C.run?'Pause':'Start'}">${icon}</button>
+   <button class="cb" data-a="cdnext" aria-label="Nächste Übung"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0A0A0A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button></div>
+  ${nx.length?`<div><div class="sec" style="margin-bottom:4px">Als Nächstes</div>${nx.map(x=>`<div class="cl"><span>${esc(x.n)}</span><span>${x.s} s${x.sd>1?' je Seite':''}</span></div>`).join('')}</div>`:''}
+  <div style="flex-grow:1"></div><button class="btn ghost" data-a="cdfin">Cooldown abschließen ✓</button>`;
+}
+
+// ───────── Backup
+function bexp(){const b=new Blob([JSON.stringify({app:'haspa27',v:1,at:new Date().toISOString(),data:S},null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`haspa27-backup-${new Date().toISOString().slice(0,10)}.json`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}
+function bimp(f){const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(e.target.result);const x=d.data||d;if(!x.logs)throw 0;if(!confirm('Backup einspielen? Die aktuellen Daten werden ersetzt.'))return;S={logs:{},cd:{},extra:[],gk:[],...x};save();render();alert('Backup eingespielt.');}catch(err){alert('Die Datei ist kein gültiges Haspa-27-Backup.');}};r.readAsText(f);}
+
+// ───────── Render & Navigation
+function render(){({week:rWeek,plan:rPlan,zones:rZones,stats:rStats,import:rImport})[view]();}
+function show(v){view=v;document.querySelectorAll('.view').forEach(e=>e.classList.toggle('on',e.id==='v-'+v));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));window.scrollTo(0,0);render();}
+function cdown(){const d=RACE-Date.now();const el=document.getElementById('cdown');if(d<=0){el.textContent='Race Day';return;}const days=Math.ceil(d/DAY);el.textContent=`${Math.floor(days/7)} Wo · ${days%7} T`;}
+
+document.addEventListener('click',e=>{
+  const nb=e.target.closest('.nav button');if(nb){show(nb.dataset.v);return;}
+  const t=e.target.closest('[data-a]');if(!t)return;const a=t.dataset.a,id=t.dataset.id,i=+t.dataset.i;
+  switch(a){
+    case'prev':if(vwi>0){vwi--;rWeek();}break;
+    case'next':if(vwi<P.length-1){vwi++;rWeek();}break;
+    case'today':vwi=cwi();rWeek();break;
+    case'tog':if(S.logs[id]){if(confirm('Einheit wieder offen setzen?')){delete S.logs[id];delete S.cd[id];save();render();}}else openSheet(id);break;
+    case'exp':openC.has(id)?openC.delete(id):openC.add(id);render();break;
+    case'cd':cdOpen(byId(id).cd,id);break;
+    case'cdfree':cdOpen(t.dataset.k,null);break;
+    case'ph':aph=i;rPlan();break;
+    case'wk':openW.has(i)?openW.delete(i):openW.add(i);rPlan();break;
+    case'rpe':rpe=+t.dataset.n;document.querySelectorAll('#rpe button').forEach(b=>b.classList.toggle('on',+b.dataset.n===rpe));break;
+    case'shSave':saveSheet(false);break;
+    case'shQuick':saveSheet(true);break;
+    case'shClose':closeSheet();break;
+    case'cdx':if(!C.run||confirm('Cooldown abbrechen?'))cdClose();break;
+    case'cdk':cdSwitch(t.dataset.k);break;
+    case'cdplay':cdPlay();break;
+    case'cdprev':cdGo(-1,false);break;
+    case'cdnext':cdGo(1,false);break;
+    case'cdfin':cdFinish();break;
+    case'gok':gm[i].ok=!gm[i].ok;if(gm[i].ok)gm[i].skip=false;rImport();break;
+    case'gskip':gm[i].skip=!gm[i].skip;if(gm[i].skip)gm[i].ok=false;rImport();break;
+    case'gall':gm.forEach(m=>{if(!m.dup&&!m.skip&&m.to!=='none')m.ok=true;});rImport();break;
+    case'gcommit':gcommit();break;
+    case'greset':gm=[];rImport();break;
+    case'bexp':bexp();break;
+    case'breset':if(confirm('Wirklich alle Trainingsdaten löschen? Das lässt sich nur mit einem Backup rückgängig machen.')){S={logs:{},cd:{},extra:[],gk:[]};save();render();}break;
+  }
+});
+document.addEventListener('change',e=>{
+  if(e.target.id==='gfile'&&e.target.files[0]){const r=new FileReader();r.onload=x=>gparse(x.target.result);r.readAsText(e.target.files[0]);}
+  if(e.target.id==='bfile'&&e.target.files[0])bimp(e.target.files[0]);
+  if(e.target.dataset.a==='gsel'){gm[+e.target.dataset.i].to=e.target.value;}
+});
+document.getElementById('sheet').addEventListener('click',e=>{if(e.target.id==='sheet')closeSheet();});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&C&&C.run)reqWL();});
+
+cdown();setInterval(cdown,60000);render();
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
